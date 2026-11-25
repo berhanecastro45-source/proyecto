@@ -1,0 +1,190 @@
+classDiagram
+    direction TB
+
+    class ModelBase {
+        <<abstract>>
+        +DB database
+    }
+
+    class Usuario {
+        +int id_usuario «PK»
+        +str rut «UQ»
+        +str nombre
+        +str apellido_paterno
+        +str apellido_materno [0..1]
+        +str email «UQ»
+        +str password_hash
+        +str telefono [0..1]
+        +str rol = CLIENTE
+        +date fecha_nacimiento [0..1]
+        +int activo = 1
+    }
+
+    class Direccion {
+        +int id_direccion «PK»
+        +int id_usuario «FK»
+        +str calle
+        +str ciudad
+        +str comuna
+        +str region
+        +str codigo_postal [0..1]
+        +int activo = 1
+    }
+
+    class Categoria {
+        +int id_categoria «PK»
+        +str nombre «UQ»
+        +str descripcion
+        +int activo = 1
+    }
+
+    class Marca {
+        +int id_marca «PK»
+        +str nombre «UQ»
+        +int activo = 1
+    }
+
+    class Proveedor {
+        +int id_proveedor «PK»
+        +str rut «UQ»
+        +str nombre
+        +str telefono [0..1]
+        +str email «UQ»
+        +int activo = 1
+    }
+
+    class Producto {
+        +int id_producto «PK»
+        +str nombre
+        +str descripcion
+        +Decimal precio
+        +int stock
+        +int stock_minimo = 0
+        +int id_categoria «FK»
+        +int id_marca «FK»
+        +int id_proveedor «FK»
+        +datetime fecha_creacion
+        +int activo = 1
+    }
+
+    class ImagenProducto {
+        +int id_imagen «PK»
+        +int id_producto «FK»
+        +str url_imagen
+        +int activo = 1
+    }
+
+    class MovimientoStock {
+        +int id_movimiento «PK»
+        +int id_producto «FK»
+        +int cantidad
+        +str tipo
+        +datetime fecha_movimiento
+    }
+
+    class Carrito {
+        +int id_carrito «PK»
+        +int id_usuario «FK, UQ»
+        +int activo = 1
+    }
+
+    class DetalleCarrito {
+        +int id_detalle_carrito «PK»
+        +int id_carrito «FK»
+        +int id_producto «FK»
+        +int cantidad
+        +Decimal precio_unitario
+        +Decimal subtotal
+    }
+
+    class Cupon {
+        +int id_cupon «PK»
+        +str codigo «UQ»
+        +Decimal descuento
+        +date fecha_inicio
+        +date fecha_fin
+        +int activo = 1
+    }
+
+    class Pedido {
+        +int id_pedido «PK»
+        +int id_usuario «FK»
+        +int id_cupon «FK» [0..1]
+        +str direccion_envio
+        +str estado = PENDIENTE
+        +Decimal total
+        +datetime fecha_pedido
+    }
+
+    class DetallePedido {
+        +int id_detalle «PK»
+        +int id_pedido «FK»
+        +int id_producto «FK»
+        +int cantidad
+        +Decimal precio_unitario
+        +Decimal subtotal
+    }
+
+    class FormaPago {
+        +int id_forma_pago «PK»
+        +str nombre «UQ»
+        +str descripcion
+        +int activo = 1
+    }
+
+    class Pago {
+        +int id_pago «PK»
+        +int id_pedido «FK»
+        +int id_forma_pago «FK»
+        +Decimal monto
+        +str estado = PENDIENTE
+        +datetime fecha_pago
+    }
+
+    class Valoracion {
+        +int id_valoracion «PK»
+        +int id_usuario «FK»
+        +int id_producto «FK»
+        +int puntuacion
+        +str comentario [0..1]
+        +datetime fecha_valoracion
+        +int activo = 1
+    }
+
+    ModelBase <|-- Usuario
+    ModelBase <|-- Direccion
+    ModelBase <|-- Categoria
+    ModelBase <|-- Marca
+    ModelBase <|-- Proveedor
+    ModelBase <|-- Producto
+    ModelBase <|-- ImagenProducto
+    ModelBase <|-- MovimientoStock
+    ModelBase <|-- Carrito
+    ModelBase <|-- DetalleCarrito
+    ModelBase <|-- Cupon
+    ModelBase <|-- Pedido
+    ModelBase <|-- DetallePedido
+    ModelBase <|-- FormaPago
+    ModelBase <|-- Pago
+    ModelBase <|-- Valoracion
+
+    Usuario "1" --> "0..*" Direccion : tiene
+    Usuario "1" --> "0..1" Carrito : posee
+    Usuario "1" --> "0..*" Pedido : realiza
+    Usuario "1" --> "0..*" Valoracion : escribe
+
+    Categoria "1" --> "0..*" Producto : clasifica
+    Marca "1" --> "0..*" Producto : agrupa
+    Proveedor "1" --> "0..*" Producto : abastece
+
+    Producto "1" --> "0..*" ImagenProducto : muestra
+    Producto "1" --> "0..*" MovimientoStock : registra
+    Producto "1" --> "0..*" Valoracion : recibe
+    Producto "1" --> "0..*" DetalleCarrito : se agrega en
+    Producto "1" --> "0..*" DetallePedido : se compra en
+
+    Carrito "1" *-- "0..*" DetalleCarrito : contiene
+    Cupon "0..1" --> "0..*" Pedido : se aplica a
+    Pedido "1" --> "0..*" DetallePedido : incluye
+    Pedido "1" --> "0..*" Pago : se paga con
+    FormaPago "1" --> "0..*" Pago : define
