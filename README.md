@@ -5,10 +5,15 @@ Corresponde a la continuación del proyecto de la Evaluación N°2 (Programació
 
 ## Integrantes
 
-Nombre completo  |	Rol en el proyecto
-Berhane Castro  |	Desarrollo del proyecto
-Erick Bailey Rebolledo |	Profesor
-IEI-N2-C2/D |	Sección
+Nombre completo  	Rol en el proyecto
+
+Berhane Castro :  Desarrollo del proyecto
+
+
+Profesor:Erick Bailey Rebolledo
+
+
+Sección: IEI-N2-C2/D 
 
 ## Descripción general
 
